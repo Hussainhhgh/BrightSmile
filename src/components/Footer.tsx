@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { Sparkles, Phone, Mail, MapPin, Clock, ShieldCheck, Heart } from 'lucide-react';
+import Button from './ui/Button';
 
 interface FooterProps {
   onPageChange: (page: string) => void;
@@ -89,12 +90,9 @@ export default function Footer({ onPageChange }: FooterProps) {
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => handleLinkClick('book')}
-                  className="text-blue-400 hover:text-blue-300 font-semibold transition-colors duration-200 cursor-pointer"
-                >
+                <Button onClick={() => handleLinkClick('book')} variant="primary" size="sm" className="w-full text-left">
                   Book Online Appointment
-                </button>
+                </Button>
               </li>
             </ul>
           </div>

@@ -102,12 +102,9 @@ export default function Navbar({ currentPage, onPageChange }: NavbarProps) {
               );
             })}
             <div className="pt-2 px-4">
-              <button
-                onClick={() => handleNavClick('book')}
-                className="w-full text-center px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-medium text-base shadow-lg shadow-blue-100 hover:shadow-xl transition-all duration-200 cursor-pointer"
-              >
+              <Button onClick={() => handleNavClick('book')} variant="primary" size="md" className="w-full">
                 Book Appointment
-              </button>
+              </Button>
             </div>
           </div>
         </div>

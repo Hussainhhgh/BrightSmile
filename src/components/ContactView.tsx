@@ -10,6 +10,7 @@ import {
 import TextInput from './ui/TextInput';
 import Select from './ui/Select';
 import TextArea from './ui/TextArea';
+import Button from './ui/Button';
 
 export default function ContactView() {
   const [formData, setFormData] = useState({
@@ -245,11 +246,7 @@ export default function ContactView() {
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-600 transition shadow-lg shadow-blue-100 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
-                  disabled={loading}
-                >
+                <Button type="submit" variant="primary" size="md" className="w-full flex items-center justify-center gap-2" disabled={loading}>
                   {loading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -261,7 +258,7 @@ export default function ContactView() {
                       <span>Send Message</span>
                     </>
                   )}
-                </button>
+                </Button>
               </form>
             )}
           </div>

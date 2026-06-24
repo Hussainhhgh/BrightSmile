@@ -10,6 +10,7 @@ import {
 import TextInput from './ui/TextInput';
 import Select from './ui/Select';
 import TextArea from './ui/TextArea';
+import Button from './ui/Button';
 import { SERVICES } from '../data';
 import { AppointmentFormData } from '../types';
 
@@ -626,10 +627,12 @@ export default function BookAppointmentView({
             </div>
 
             {/* Submit Button */}
-            <button
+            <Button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-sm rounded-xl hover:from-blue-700 hover:to-cyan-600 shadow-lg shadow-blue-100 hover:shadow-xl transition transform hover:-translate-y-0.5 disabled:opacity-75 flex items-center justify-center gap-2 cursor-pointer"
+              variant="primary"
+              size="lg"
+              className="w-full flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -651,7 +654,7 @@ export default function BookAppointmentView({
                       : 'Confirm Cancellation'}
                 </span>
               )}
-            </button>
+            </Button>
           </form>
 
         </div>

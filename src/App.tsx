@@ -4,8 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import Layout from './components/Layout';
 import HomeView from './components/HomeView';
 import ServicesView from './components/ServicesView';
 import AboutView from './components/AboutView';
@@ -67,28 +66,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-800 flex flex-col justify-between selection:bg-blue-100 selection:text-blue-800 font-sans">
-      
-      {/* Skip link for accessibility */}
-      <a href="#main" className="sr-only focus:not-sr-only focus:block p-2 bg-white fixed top-4 left-4 z-50 rounded-md border border-gray-200">Skip to content</a>
-
-      {/* Top Sticky Navigation */}
-      <Navbar currentPage={currentPage} onPageChange={handlePageChange} />
-
-      {/* Primary Page Content Wrapper */}
-      <main id="main" className="flex-1">
-        {renderActiveView()}
-      </main>
-
-      {/* Floating Interactive Vapi AI Voice Assistant */}
-      <VapiVoiceAssistant
-        openSignal={voiceOpenSignal}
-        appointmentBrief={voiceAppointmentBrief}
-      />
-
-      {/* Universal Footer */}
-      <Footer onPageChange={handlePageChange} />
-
-    </div>
+    <Layout
+      currentPage={currentPage}
+      onPageChange={handlePageChange}
+      voiceOpenSignal={voiceOpenSignal}
+      appointmentBrief={voiceAppointmentBrief}
+    >
+      {renderActiveView()}
+    </Layout>
   );
 }
