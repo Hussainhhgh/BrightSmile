@@ -45,7 +45,7 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
     <div className="space-y-20 pb-16">
       
       {/* 1. HERO SECTION WITH CTA */}
-      <section className="relative overflow-hidden py-16 lg:py-24 bg-gradient-to-br from-blue-50/70 via-white to-cyan-50/50">
+      <section className="relative overflow-hidden hero">
         {/* Abstract background circles */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-100/40 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-cyan-100/30 blur-3xl pointer-events-none" />
@@ -55,27 +55,27 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
             
             {/* Left Text Column */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center space-x-2 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full text-blue-700 text-xs font-semibold">
+              <div className="inline-flex items-center space-x-2 kicker">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Modern Dental Excellence in San Francisco</span>
               </div>
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight leading-[1.1]">
+              <h1 className="font-display hero-title font-bold text-gray-900 tracking-tight">
                 A Brighter, Healthier <br className="hidden sm:inline" />
                 <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
                   Smile Awaits You
                 </span>
               </h1>
-              <p className="text-gray-600 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="lead mt-4">
                 Welcome to Hussain AI, where world-class AI expertise meets a user-friendly, accessible interface. From intelligent automation to advanced analytics, we make technology integration a seamless pleasure.
               </p>
               
               {/* Dual Call-to-actions */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
-                <Button onClick={() => onPageChange('book')} variant="primary" size="lg" className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-6">
+                <Button onClick={() => onPageChange('book')} variant="primary" size="lg" className="hero-cta flex items-center gap-2">
                   Book Appointment Now
                   <ArrowRight className="w-4 h-4" />
                 </Button>
-                <Button onClick={() => onPageChange('services')} variant="secondary" size="lg">
+                <Button onClick={() => onPageChange('services')} variant="secondary" size="lg" className="flex items-center gap-2">
                   Explore Services
                 </Button>
               </div>

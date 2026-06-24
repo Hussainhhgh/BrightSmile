@@ -62,3 +62,36 @@ body{
 
 /* Input focus using brand token */
 .input-focus:focus-visible{ box-shadow: 0 0 0 4px rgba(var(--brand-500),0.06); border-radius:0.5rem }
+
+/* Typography scale */
+:root{
+	--type-scale-1: 1.125rem; /* 18px */
+	--type-scale-2: 1.25rem;  /* 20px */
+	--type-scale-3: 1.5rem;   /* 24px */
+	--type-scale-4: 2rem;     /* 32px */
+	--type-scale-5: 2.5rem;   /* 40px */
+	--type-scale-6: 3.25rem;  /* 52px */
+}
+
+/* Hero utilities */
+.hero{
+	padding: 3.5rem 0;
+	background: linear-gradient(180deg, rgba(var(--bg),1) 0%, rgba(240,249,255,0.6) 100%);
+}
+.hero-title{
+	font-size: var(--type-scale-6);
+	line-height: 1.03;
+	letter-spacing: -0.02em;
+}
+.lead{font-size:var(--type-scale-2);color:rgb(var(--muted));max-width:48rem}
+.kicker{display:inline-block;background:rgba(var(--brand-400),0.08);color:rgb(var(--brand-600));padding:.35rem .75rem;border-radius:9999px;font-weight:600;font-size:0.6875rem}
+
+/* CTA styles */
+.hero-cta{box-shadow:var(--shadow-2);transform:translateY(0);transition:transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s}
+.hero-cta:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(14,165,233,0.14)}
+
+/* Card hover lift */
+.card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(2,6,23,0.12);transition:transform .25s, box-shadow .25s}
+
+/* Container utility */
+.site-container{max-width:1200px;margin-left:auto;margin-right:auto;padding-left:1rem;padding-right:1rem}
