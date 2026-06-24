@@ -11,6 +11,7 @@ import { SERVICES } from '../data';
 import { AppointmentFormData } from '../types';
 
 type BookingMode = 'form' | 'voice';
+type AppointmentAction = 'book' | 'reschedule' | 'cancel';
 
 interface BookAppointmentViewProps {
   preSelectedServiceId: string | null;
@@ -24,6 +25,8 @@ export default function BookAppointmentView({
   onNavigateHome 
 }: BookAppointmentViewProps) {
   const [bookingMode, setBookingMode] = useState<BookingMode>('form');
+  const [appointmentAction, setAppointmentAction] = useState<AppointmentAction>('book');
+  const [bookingReference, setBookingReference] = useState('');
   
   // Resolve pre-selected service
   const initialService = SERVICES.find(s => s.id === preSelectedServiceId)?.title || 'Routine Cleaning';
@@ -74,9 +77,23 @@ export default function BookAppointmentView({
     e.preventDefault();
     setError(null);
 
-    // Basic Validation
-    if (!formData.fullName || !formData.phone || !formData.email || !formData.date || !formData.time) {
-      setError('Please fill in all required scheduling fields.');
+    const needsReference = appointmentAction !== 'book';
+    const needsScheduledTime = appointmentAction !== 'cancel';
+
+    if (!formData.fullName || !formData.phone || !formData.email) {
+      setError('Please fill in the patient contact details.');
+      return;
+    }
+
+    if (needsScheduledTime && (!formData.date || !formData.time)) {
+      setError(appointmentAction === 'reschedule'
+        ? 'Please choose the new date and time for the reschedule request.'
+        : 'Please choose a date and time for the appointment request.');
+      return;
+    }
+
+    if (needsReference && !bookingReference.trim()) {
+      setError('Please enter the existing booking reference for this request.');
       return;
     }
 
@@ -86,10 +103,13 @@ export default function BookAppointmentView({
       callerName: formData.fullName,
       callerPhone: formData.phone,
       callerEmail: formData.email,
-      requestedTime: `${formData.date}T${formData.time}:00`,
-      action: 'Book',
-      reason: formData.serviceType,
-      eventId: ''
+      requestedTime: needsScheduledTime ? `${formData.date}T${formData.time}:00` : '',
+      action: appointmentAction === 'book' ? 'Book' : appointmentAction === 'reschedule' ? 'Reschedule' : 'Cancel',
+      reason:
+        appointmentAction === 'cancel'
+          ? `Cancellation request for ${formData.serviceType}`
+          : formData.serviceType,
+      eventId: bookingReference.trim()
     };
 
     try {
@@ -130,10 +150,37 @@ export default function BookAppointmentView({
     window.print();
   };
 
+  const resetSchedulerForm = () => {
+    setSuccess(false);
+    setLoading(false);
+    setError(null);
+    setBookingReference('');
+    setBookingMode('form');
+    setAppointmentAction('book');
+    setFormData({
+      fullName: '',
+      phone: '',
+      email: '',
+      date: '',
+      time: '',
+      serviceType: 'Routine Cleaning',
+      notes: ''
+    });
+  };
+
   const handleStartVoiceBooking = () => {
     setBookingMode('voice');
+
+    const actionLabel = appointmentAction === 'book'
+      ? 'book'
+      : appointmentAction === 'reschedule'
+        ? 'reschedule'
+        : 'cancel';
+
     onRequestVoiceScheduling(
-      `Schedule a BrightSmile appointment for ${formData.serviceType}. Collect the patient's name, phone number, email, preferred date, time, and any treatment notes, then confirm the booking before ending the call.`
+      appointmentAction === 'cancel'
+        ? `Cancel a BrightSmile appointment for ${formData.serviceType}. Collect the patient's name, phone number, email, and booking reference ${bookingReference || 'if available'}, then confirm the cancellation before ending the call.`
+        : `Please ${actionLabel} a BrightSmile appointment for ${formData.serviceType}. Collect the patient's name, phone number, email, booking reference ${bookingReference || 'if available'}, preferred date, time, and any treatment notes, then confirm the request before ending the call.`
     );
   };
 
@@ -154,9 +201,19 @@ export default function BookAppointmentView({
             <div className="bg-white/20 p-3 rounded-full w-max mx-auto print:hidden">
               <CheckCircle className="w-8 h-8 text-white" />
             </div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold">Appointment Confirmed!</h1>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold">
+              {appointmentAction === 'book'
+                ? 'Appointment Confirmed!'
+                : appointmentAction === 'reschedule'
+                  ? 'Reschedule Request Sent!'
+                  : 'Cancellation Confirmed!'}
+            </h1>
             <p className="text-cyan-100 text-xs sm:text-sm print:text-gray-500">
-              Your dental session has been reserved and synchronized.
+              {appointmentAction === 'book'
+                ? 'Your dental session has been reserved and synchronized.'
+                : appointmentAction === 'reschedule'
+                  ? 'Your reschedule request has been sent and queued for confirmation.'
+                  : 'Your cancellation request has been sent and recorded.'}
             </p>
           </div>
 
@@ -248,21 +305,14 @@ export default function BookAppointmentView({
                   <Printer className="w-4 h-4" /> Print Ticket
                 </button>
                 <button
-                  onClick={() => {
-                    setSuccess(false);
-                    setFormData({
-                      fullName: '',
-                      phone: '',
-                      email: '',
-                      date: '',
-                      time: '',
-                      serviceType: 'Routine Cleaning',
-                      notes: ''
-                    });
-                  }}
+                  onClick={resetSchedulerForm}
                   className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition cursor-pointer"
                 >
-                  Book Another Slot
+                  {appointmentAction === 'book'
+                    ? 'Book Another Slot'
+                    : appointmentAction === 'reschedule'
+                      ? 'Schedule Another Change'
+                      : 'Submit Another Request'}
                 </button>
               </div>
             </div>
@@ -358,7 +408,13 @@ export default function BookAppointmentView({
 
             {bookingMode === 'voice' && (
               <div className="rounded-2xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-cyan-950">
-                <p className="font-semibold">Voice booking is ready.</p>
+                <p className="font-semibold">
+                  {appointmentAction === 'book'
+                    ? 'Voice booking is ready.'
+                    : appointmentAction === 'reschedule'
+                      ? 'Voice rescheduling is ready.'
+                      : 'Voice cancellation is ready.'}
+                </p>
                 <p className="mt-1 text-cyan-900/80 text-sm">
                   Olivia will open in the floating assistant. You can still keep this form open or switch back to online booking at any time.
                 </p>
@@ -381,7 +437,57 @@ export default function BookAppointmentView({
             )}
 
             <div className="space-y-4">
-              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setAppointmentAction('book')}
+                  className={`rounded-2xl border px-4 py-3 text-left transition cursor-pointer ${
+                    appointmentAction === 'book'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-md'
+                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className={`block text-xs font-semibold uppercase tracking-wider ${appointmentAction === 'book' ? 'text-cyan-100' : 'text-blue-700'}`}>
+                    Book
+                  </span>
+                  <span className="mt-1 block text-sm opacity-90">
+                    Create a new appointment.
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAppointmentAction('reschedule')}
+                  className={`rounded-2xl border px-4 py-3 text-left transition cursor-pointer ${
+                    appointmentAction === 'reschedule'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-md'
+                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className={`block text-xs font-semibold uppercase tracking-wider ${appointmentAction === 'reschedule' ? 'text-cyan-100' : 'text-blue-700'}`}>
+                    Reschedule
+                  </span>
+                  <span className="mt-1 block text-sm opacity-90">
+                    Move an existing appointment.
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAppointmentAction('cancel')}
+                  className={`rounded-2xl border px-4 py-3 text-left transition cursor-pointer ${
+                    appointmentAction === 'cancel'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-md'
+                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className={`block text-xs font-semibold uppercase tracking-wider ${appointmentAction === 'cancel' ? 'text-cyan-100' : 'text-blue-700'}`}>
+                    Cancel
+                  </span>
+                  <span className="mt-1 block text-sm opacity-90">
+                    Cancel an existing appointment.
+                  </span>
+                </button>
+              </div>
+
               {/* Full Name */}
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Full Patient Name *</label>
@@ -398,6 +504,21 @@ export default function BookAppointmentView({
                   />
                 </div>
               </div>
+
+              {/* Booking reference for cancel/reschedule */}
+              {appointmentAction !== 'book' && (
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1">Booking Reference *</label>
+                  <input
+                    type="text"
+                    value={bookingReference}
+                    onChange={(e) => setBookingReference(e.target.value)}
+                    placeholder="e.g. BS-1A2B3C"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
+                    required
+                  />
+                </div>
+              )}
 
               {/* Email & Phone */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -452,44 +573,62 @@ export default function BookAppointmentView({
               </div>
 
               {/* Date & Time slots */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 mb-1">Appointment Date *</label>
-                  <input
-                    type="date"
-                    name="date"
-                    min={new Date().toISOString().split('T')[0]}
-                    value={formData.date}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
-                    required
-                  />
+              {appointmentAction !== 'cancel' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">
+                      {appointmentAction === 'reschedule' ? 'New Appointment Date *' : 'Appointment Date *'}
+                    </label>
+                    <input
+                      type="date"
+                      name="date"
+                      min={new Date().toISOString().split('T')[0]}
+                      value={formData.date}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">
+                      {appointmentAction === 'reschedule' ? 'New Session Start Time *' : 'Session Start Time *'}
+                    </label>
+                    <select
+                      name="time"
+                      value={formData.time}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white cursor-pointer"
+                      required
+                    >
+                      <option value="" disabled>Select a Time Slot</option>
+                      {timeSlots.map(slot => (
+                        <option key={slot} value={slot}>{slot} AM/PM</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 mb-1">Session Start Time *</label>
-                  <select
-                    name="time"
-                    value={formData.time}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white cursor-pointer"
-                    required
-                  >
-                    <option value="" disabled>Select a Time Slot</option>
-                    {timeSlots.map(slot => (
-                      <option key={slot} value={slot}>{slot} AM/PM</option>
-                    ))}
-                  </select>
+              )}
+
+              {appointmentAction === 'cancel' && (
+                <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4 text-sm text-amber-950">
+                  Cancellation requests do not need a new date or time. Olivia or the form will use the booking reference to process the change.
                 </div>
-              </div>
+              )}
 
               {/* Notes */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Additional Treatment / Patient Notes</label>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">
+                  {appointmentAction === 'cancel' ? 'Cancellation Notes' : 'Additional Treatment / Patient Notes'}
+                </label>
                 <textarea
                   name="notes"
                   value={formData.notes}
                   onChange={handleInputChange}
-                  placeholder="Specify any special dental history, allergies, or anxiety triggers..."
+                  placeholder={
+                    appointmentAction === 'cancel'
+                      ? 'Add any reason or special instructions for the cancellation...'
+                      : 'Specify any special dental history, allergies, or anxiety triggers...'
+                  }
                   rows={3}
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white resize-none"
                 />
@@ -506,10 +645,22 @@ export default function BookAppointmentView({
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Aligning Calendar & Reserving Slot...</span>
+                  <span>
+                    {appointmentAction === 'book'
+                      ? 'Aligning Calendar & Reserving Slot...'
+                      : appointmentAction === 'reschedule'
+                        ? 'Updating Appointment...'
+                        : 'Submitting Cancellation...'}
+                  </span>
                 </>
               ) : (
-                <span>Confirm My Dental Appointment</span>
+                <span>
+                  {appointmentAction === 'book'
+                    ? 'Confirm My Dental Appointment'
+                    : appointmentAction === 'reschedule'
+                      ? 'Request Reschedule'
+                      : 'Confirm Cancellation'}
+                </span>
               )}
             </button>
           </form>
