@@ -16,6 +16,8 @@ import VapiVoiceAssistant from './components/VapiVoiceAssistant';
 export default function App() {
   const [currentPage, setCurrentPage] = useState<string>('home');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [voiceOpenSignal, setVoiceOpenSignal] = useState(0);
+  const [voiceAppointmentBrief, setVoiceAppointmentBrief] = useState<string | null>(null);
 
   // Auto-scroll to top upon changing page tabs
   useEffect(() => {
@@ -26,6 +28,11 @@ export default function App() {
   const handleBookService = (serviceId: string) => {
     setSelectedServiceId(serviceId);
     setCurrentPage('book');
+  };
+
+  const handleRequestVoiceScheduler = (brief: string) => {
+    setVoiceAppointmentBrief(brief);
+    setVoiceOpenSignal((signal) => signal + 1);
   };
 
   const handlePageChange = (page: string) => {
@@ -50,6 +57,7 @@ export default function App() {
         return (
           <BookAppointmentView 
             preSelectedServiceId={selectedServiceId} 
+            onRequestVoiceScheduling={handleRequestVoiceScheduler}
             onNavigateHome={() => handlePageChange('home')}
           />
         );
@@ -70,7 +78,10 @@ export default function App() {
       </main>
 
       {/* Floating Interactive Vapi AI Voice Assistant */}
-      <VapiVoiceAssistant />
+      <VapiVoiceAssistant
+        openSignal={voiceOpenSignal}
+        appointmentBrief={voiceAppointmentBrief}
+      />
 
       {/* Universal Footer */}
       <Footer onPageChange={handlePageChange} />

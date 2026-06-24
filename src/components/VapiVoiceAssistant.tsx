@@ -18,7 +18,12 @@ interface TranscriptMessage {
   timestamp: Date;
 }
 
-export default function VapiVoiceAssistant() {
+interface VapiVoiceAssistantProps {
+  openSignal: number;
+  appointmentBrief: string | null;
+}
+
+export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: VapiVoiceAssistantProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCallActive, setIsCallActive] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'connecting' | 'active' | 'error' | 'stopped'>('idle');
@@ -49,6 +54,14 @@ export default function VapiVoiceAssistant() {
 
   const vapiRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (openSignal > 0) {
+      setIsOpen(true);
+      setShowSettings(false);
+      setError(null);
+    }
+  }, [openSignal]);
 
   // Save settings when changed
   const handleSaveSettings = (key: string, assistantId: string) => {
@@ -102,7 +115,9 @@ export default function VapiVoiceAssistant() {
             {
               id: 'init',
               role: 'assistant',
-              text: "Hello! Thank you for calling BrightSmile Dental Clinic. How can I assist you with your oral health today?",
+              text: appointmentBrief
+                ? `Hello! Thank you for calling BrightSmile Dental Clinic. I have your booking request ready: ${appointmentBrief} How can I help finalize the appointment?`
+                : "Hello! Thank you for calling BrightSmile Dental Clinic. How can I assist you with your oral health today?",
               isFinal: true,
               timestamp: new Date(),
             },
@@ -291,6 +306,15 @@ export default function VapiVoiceAssistant() {
                 ) : (
                   /* Call Chat Interface */
                   <div className="flex-1 flex flex-col">
+                    {appointmentBrief && (
+                      <div className="mb-3 rounded-2xl border border-blue-100 bg-blue-50 p-3 text-xs text-blue-950">
+                        <span className="block text-[10px] font-semibold uppercase tracking-wider text-blue-700 mb-1">
+                          Appointment brief
+                        </span>
+                        <p>{appointmentBrief}</p>
+                      </div>
+                    )}
+
                     {error && (
                       <div className="mb-3 p-3 bg-red-50 border border-red-100 rounded-xl text-xs text-red-600 flex items-start space-x-2">
                         <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -312,6 +336,11 @@ export default function VapiVoiceAssistant() {
                           <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-semibold">Try asking Olivia:</span>
                           <p className="text-xs text-gray-600 bg-gray-50 p-1.5 rounded border border-gray-100">"Can I book a routine cleaning next Saturday?"</p>
                           <p className="text-xs text-gray-600 bg-gray-50 p-1.5 rounded border border-gray-100">"Do you take PPO insurance plans?"</p>
+                          {appointmentBrief && (
+                            <p className="text-xs text-blue-700 bg-blue-50 p-1.5 rounded border border-blue-100">
+                              {appointmentBrief}
+                            </p>
+                          )}
                         </div>
                       </div>
                     ) : (

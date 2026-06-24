@@ -10,15 +10,20 @@ import {
 import { SERVICES } from '../data';
 import { AppointmentFormData } from '../types';
 
+type BookingMode = 'form' | 'voice';
+
 interface BookAppointmentViewProps {
   preSelectedServiceId: string | null;
+  onRequestVoiceScheduling: (brief: string) => void;
   onNavigateHome: () => void;
 }
 
 export default function BookAppointmentView({ 
   preSelectedServiceId, 
+  onRequestVoiceScheduling,
   onNavigateHome 
 }: BookAppointmentViewProps) {
+  const [bookingMode, setBookingMode] = useState<BookingMode>('form');
   
   // Resolve pre-selected service
   const initialService = SERVICES.find(s => s.id === preSelectedServiceId)?.title || 'Routine Cleaning';
@@ -123,6 +128,13 @@ export default function BookAppointmentView({
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleStartVoiceBooking = () => {
+    setBookingMode('voice');
+    onRequestVoiceScheduling(
+      `Schedule a BrightSmile appointment for ${formData.serviceType}. Collect the patient's name, phone number, email, preferred date, time, and any treatment notes, then confirm the booking before ending the call.`
+    );
   };
 
   // List of professional available standard slots
@@ -295,6 +307,63 @@ export default function BookAppointmentView({
 
           {/* Right panel: actual inputs */}
           <form onSubmit={handleFormSubmit} className="md:col-span-8 p-6 sm:p-8 space-y-6">
+            <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => setBookingMode('form')}
+                className={`flex-1 rounded-2xl px-4 py-3 text-left transition cursor-pointer ${
+                  bookingMode === 'form'
+                    ? 'bg-white shadow-sm border border-blue-200'
+                    : 'bg-transparent border border-transparent hover:bg-white/80'
+                }`}
+              >
+                <span className="block text-xs font-semibold uppercase tracking-wider text-blue-700">Book online</span>
+                <span className="mt-1 block text-sm text-gray-600">
+                  Enter your details here and confirm the slot instantly.
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={handleStartVoiceBooking}
+                className={`flex-1 rounded-2xl px-4 py-3 text-left transition cursor-pointer ${
+                  bookingMode === 'voice'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-transparent border border-transparent hover:bg-white/80'
+                }`}
+              >
+                <span className={`block text-xs font-semibold uppercase tracking-wider ${bookingMode === 'voice' ? 'text-cyan-100' : 'text-blue-700'}`}>
+                  Book by call
+                </span>
+                <span className={`mt-1 block text-sm ${bookingMode === 'voice' ? 'text-white/90' : 'text-gray-600'}`}>
+                  Olivia opens with your treatment context and can schedule live.
+                </span>
+              </button>
+            </div>
+
+            <div className="p-4 rounded-2xl border border-blue-100 bg-blue-50/70 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="space-y-1">
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">Voice scheduling</p>
+                <p className="text-sm text-blue-950">
+                  Prefer to book by phone? Olivia can collect your appointment details live and send them straight to the scheduler.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleStartVoiceBooking}
+                className="px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition cursor-pointer whitespace-nowrap"
+              >
+                Start voice call
+              </button>
+            </div>
+
+            {bookingMode === 'voice' && (
+              <div className="rounded-2xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-cyan-950">
+                <p className="font-semibold">Voice booking is ready.</p>
+                <p className="mt-1 text-cyan-900/80 text-sm">
+                  Olivia will open in the floating assistant. You can still keep this form open or switch back to online booking at any time.
+                </p>
+              </div>
+            )}
             
             {/* Error Indicator */}
             {error && (
