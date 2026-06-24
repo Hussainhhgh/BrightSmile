@@ -1,6 +1,6 @@
-# BrightSmile Dental Clinic Website
+# Hussain AI Website
 
-A modern, premium, and fully-responsive healthcare application for **BrightSmile Dental Clinic**. Built using React, TypeScript, and Tailwind CSS, this website features complete administrative flows, an online appointment reservation system, and a live AI Voice Receptionist widget.
+A modern, premium, and fully-responsive application for **Hussain AI**. Built using React, TypeScript, and Tailwind CSS, this website features complete administrative flows, an online appointment reservation system, and a live AI Voice Receptionist widget.
 
 ## 🚀 Key Features
 

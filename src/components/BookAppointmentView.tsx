@@ -179,8 +179,8 @@ export default function BookAppointmentView({
 
     onRequestVoiceScheduling(
       appointmentAction === 'cancel'
-        ? `Cancel a BrightSmile appointment for ${formData.serviceType}. Collect the patient's name, phone number, email, and booking reference ${bookingReference || 'if available'}, then confirm the cancellation before ending the call.`
-        : `Please ${actionLabel} a BrightSmile appointment for ${formData.serviceType}. Collect the patient's name, phone number, email, booking reference ${bookingReference || 'if available'}, preferred date, time, and any treatment notes, then confirm the request before ending the call.`
+        ? `Cancel a Hussain AI appointment for ${formData.serviceType}. Collect the patient's name, phone number, email, and booking reference ${bookingReference || 'if available'}, then confirm the cancellation before ending the call.`
+        : `Please ${actionLabel} a Hussain AI appointment for ${formData.serviceType}. Collect the patient's name, phone number, email, booking reference ${bookingReference || 'if available'}, preferred date, time, and any treatment notes, then confirm the request before ending the call.`
     );
   };
 

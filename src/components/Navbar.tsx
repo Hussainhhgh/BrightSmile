@@ -41,10 +41,10 @@ export default function Navbar({ currentPage, onPageChange }: NavbarProps) {
             </div>
             <div>
               <span className="font-display text-xl font-bold bg-gradient-to-r from-gray-900 to-blue-950 bg-clip-text text-transparent">
-                BrightSmile
+                Hussain AI
               </span>
               <span className="block text-[10px] uppercase tracking-wider text-blue-600 font-semibold font-mono leading-none">
-                Dental Clinic
+                Platform
               </span>
             </div>
           </div>

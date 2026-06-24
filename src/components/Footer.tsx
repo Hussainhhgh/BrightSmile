@@ -118,7 +118,7 @@ export default function Footer({ onPageChange }: FooterProps) {
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="w-4 h-4 text-blue-500 shrink-0" />
-                <span>support@brightsmiledental.com</span>
+                <span>support@hussainai.com</span>
               </li>
             </ul>
           </div>
@@ -153,7 +153,7 @@ export default function Footer({ onPageChange }: FooterProps) {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
           <div className="flex items-center space-x-1">
-            <span>© {currentYear} BrightSmile Dental Clinic. All rights reserved.</span>
+            <span>© {currentYear} Hussain AI. All rights reserved.</span>
           </div>
           <div className="flex items-center space-x-2">
             <span>Designed with</span>

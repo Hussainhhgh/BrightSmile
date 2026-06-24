@@ -158,7 +158,7 @@ export const TESTIMONIALS: Testimonial[] = [
 export const FAQS: FAQItem[] = [
   {
     id: 'faq1',
-    question: 'How often should I visit BrightSmile Dental Clinic for a checkup?',
+    question: 'How often should I visit Hussain AI for a checkup?',
     answer: 'For most children and adults, we recommend a routine checkup and professional cleaning twice a year (every 6 months) to catch potential issues early and maintain excellent oral health.',
     category: 'general'
   },

@@ -65,7 +65,7 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
                 </span>
               </h1>
               <p className="text-gray-600 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Welcome to BrightSmile Dental Clinic, where world-class clinical expertise meets a gentle, high-comfort environment. From general checkups to advanced smile makeovers, we make dental health a seamless pleasure.
+                Welcome to Hussain AI, where world-class AI expertise meets a user-friendly, accessible interface. From intelligent automation to advanced analytics, we make technology integration a seamless pleasure.
               </p>
               
               {/* Dual Call-to-actions */}
@@ -112,7 +112,7 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
                 <div className="relative bg-white p-3 rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
                   <img
                     src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800"
-                    alt="BrightSmile Modern Clinical Office"
+                    alt="Hussain AI Modern Office"
                     className="w-full h-[400px] object-cover rounded-2xl"
                   />
                   {/* Floating clinic stat bubble */}
@@ -137,7 +137,7 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="font-display text-3xl font-bold text-gray-900 tracking-tight">
-            Why Patients Choose BrightSmile
+              Why Clients Choose Hussain AI
           </h2>
           <p className="mt-3 text-gray-500 text-sm sm:text-base">
             We are dedicated to redefining oral healthcare through state-of-the-art procedures, high compassion levels, and an unmatched focus on patient comfort.

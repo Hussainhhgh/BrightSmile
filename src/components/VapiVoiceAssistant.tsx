@@ -117,8 +117,8 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
               id: 'init',
               role: 'assistant',
               text: appointmentBrief
-                ? `Hello! Thank you for calling BrightSmile Dental Clinic. I have your booking request ready: ${appointmentBrief} How can I help finalize the appointment?`
-                : "Hello! Thank you for calling BrightSmile Dental Clinic. How can I assist you with your oral health today?",
+                ? `Hello! Thank you for calling Hussain AI. I have your request ready: ${appointmentBrief} How can I help finalize your appointment?`
+                : "Hello! Thank you for calling Hussain AI. How can I assist you today?",
               isFinal: true,
               timestamp: new Date(),
             },
@@ -267,7 +267,7 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
                       Olivia - Voice Assistant
                     </h3>
                     <p className="text-[10px] text-cyan-100 font-mono">
-                      {connectionStatus === 'active' ? '● Live Call Connected' : 'BrightSmile AI Receptionist'}
+                      {connectionStatus === 'active' ? '● Live Call Connected' : 'Hussain AI Assistant'}
                     </p>
                   </div>
                 </div>

@@ -50,8 +50,8 @@ export default function ContactView() {
       icon: Mail,
       title: 'Email Communications',
       desc: 'We respond to inquiries within 1 business day.',
-      value: 'support@brightsmiledental.com',
-      link: 'mailto:support@brightsmiledental.com'
+      value: 'support@hussainai.com',
+      link: 'mailto:support@hussainai.com'
     },
     {
       icon: MapPin,
@@ -162,7 +162,7 @@ export default function ContactView() {
                 <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto" />
                 <h3 className="font-bold text-emerald-800 text-base">Inquiry Submitted Successfully!</h3>
                 <p className="text-xs text-emerald-600 max-w-md mx-auto">
-                  Thank you for reaching out to BrightSmile. One of our dental administration assistants will contact you via email shortly.
+                  Thank you for reaching out to Hussain AI. One of our team members will contact you via email shortly.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
@@ -255,7 +255,7 @@ export default function ContactView() {
           {/* Interactive Illustrative Map Frame */}
           <div className="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm space-y-3">
             <div className="flex justify-between items-center px-2">
-              <span className="text-xs font-bold text-gray-900 font-display">BrightSmile Clinical Headquarters</span>
+              <span className="text-xs font-bold text-gray-900 font-display">Hussain AI Headquarters</span>
               <a 
                 href="https://maps.google.com" 
                 target="_blank" 
@@ -290,7 +290,7 @@ export default function ContactView() {
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div className="bg-white px-2 py-0.5 rounded shadow text-[9px] font-bold text-gray-800 border border-gray-100 mt-1">
-                  BrightSmile Suite 400
+                  Hussain AI HQ
                 </div>
               </div>
 

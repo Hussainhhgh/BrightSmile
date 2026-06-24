@@ -58,7 +58,7 @@ export default function AboutView() {
             Dental Experience
           </h1>
           <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-            Founded in 2012, BrightSmile Dental Clinic was built on a simple premise: dental visits should be restorative, educational, and absolutely comfortable. Over the past decade, we have established one of San Francisco's premier clinical hubs, serving over 5,000 families with a combination of elite clinical expertise and genuine human kindness.
+            Founded in 2012, Hussain AI was built on a simple premise: providing AI-driven solutions that are restorative, educational, and absolutely user-friendly. Over the past decade, we have established one of the leading AI innovation hubs, serving over 5,000 clients with a combination of elite technical expertise and genuine human-centered design.
           </p>
           <blockquote className="border-l-4 border-blue-600 pl-4 text-gray-500 italic text-sm">
             "Your oral health is a vital gateway to overall physical wellness. Our mission is to make sure that gateway is guarded with state-of-the-art diagnostics and highly compassionate experts."
