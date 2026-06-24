@@ -36,35 +36,24 @@ export default function BookAppointmentView({
 
   const [formData, setFormData] = useState<AppointmentFormData>({
     fullName: '',
-    try {
-      // Post to our server-side booking endpoint which will forward to the real webhook
-      const response = await fetch('/api/book', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          callerName: formData.fullName,
-          callerPhone: formData.phone,
-          callerEmail: formData.email,
-          requestedTime: payload.requestedTime,
-          action: payload.action,
-          reason: payload.reason,
-          eventId: payload.eventId,
-          source: 'booking_form'
-        })
-      });
+    phone: '',
+    email: '',
+    date: '',
+    time: '',
+    serviceType: initialService,
+    notes: ''
+  });
 
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}));
-        throw new Error(body?.error || `Server returned ${response.status}`);
-      }
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [bookingTicketId, setBookingTicketId] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-      setBookingTicketId(generateTicketId());
-      setSuccess(true);
-    } catch (err: any) {
-      console.error('Booking submission error:', err);
-      setError(
-        err?.message || 'We could not connect to our booking system. Please check your network or try again.'
-      );
+  const n8nWebhookUrl = (import.meta.env.NEXT_PUBLIC_N8N_WEBHOOK_URL as string) || '';
+
+  const generateTicketId = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = 'BS-';
     for (let i = 0; i < 6; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
