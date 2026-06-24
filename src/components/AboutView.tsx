@@ -45,7 +45,7 @@ export default function AboutView() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+    <div className="site-container mx-auto py-12 space-y-20">
       
       {/* Narrative Intro */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -68,7 +68,7 @@ export default function AboutView() {
 
         {/* Story Illustration Frame */}
         <div className="lg:col-span-5">
-          <div className="relative mx-auto max-w-[360px]">
+          <div className="relative mx-auto max-w-[360px] card overflow-hidden">
             <div className="absolute inset-0 bg-blue-600 rounded-3xl rotate-2 opacity-10" />
             <img 
               src="https://images.unsplash.com/photo-1579684389782-64d84b5e9053?auto=format&fit=crop&q=80&w=600" 
@@ -90,7 +90,7 @@ export default function AboutView() {
           {values.map((v, i) => {
             const Icon = v.icon;
             return (
-              <div key={i} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+              <div key={i} className="card bg-white rounded-2xl p-6 border border-gray-100 space-y-4">
                 <div className="bg-blue-50 p-3.5 rounded-xl text-blue-600 w-max">
                   <Icon className="w-6 h-6" />
                 </div>
@@ -111,7 +111,7 @@ export default function AboutView() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {DOCTORS.map((doc) => (
-            <div key={doc.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
+            <div key={doc.id} className="card bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col justify-between">
               <div>
                 <img src={doc.image} alt={doc.name} className="w-full h-56 object-cover" />
                 <div className="p-6 space-y-4">

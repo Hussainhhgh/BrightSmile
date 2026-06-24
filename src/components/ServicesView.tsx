@@ -7,6 +7,7 @@ import React from 'react';
 import { 
   Sparkles, ShieldCheck, Zap, Activity, Flame, Heart, ArrowRight, CheckCircle 
 } from 'lucide-react';
+import Button from './ui/Button';
 import { SERVICES } from '../data';
 
 interface ServicesViewProps {
@@ -34,7 +35,7 @@ export default function ServicesView({ onBookService }: ServicesViewProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+    <div className="site-container mx-auto py-12 space-y-16">
       
       {/* Page Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
@@ -54,7 +55,7 @@ export default function ServicesView({ onBookService }: ServicesViewProps) {
         {SERVICES.map((svc) => (
           <div 
             key={svc.id}
-            className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-blue-50/30 transition-all duration-300 flex flex-col justify-between"
+            className="card bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 flex flex-col justify-between"
           >
             <div className="space-y-6">
               {/* Header inside card */}
@@ -102,13 +103,10 @@ export default function ServicesView({ onBookService }: ServicesViewProps) {
 
             {/* Book Now Button */}
             <div className="mt-8 pt-6 border-t border-gray-100">
-              <button
-                onClick={() => onBookService(svc.id)}
-                className="w-full py-3.5 px-4 bg-gray-50 border border-gray-100 hover:bg-blue-600 hover:border-blue-600 hover:text-white rounded-xl text-gray-800 text-sm font-semibold transition-all duration-200 cursor-pointer flex justify-center items-center gap-2 group"
-              >
+              <Button onClick={() => onBookService(svc.id)} variant="primary" size="md" className="w-full flex items-center justify-center gap-2">
                 <span>Book This Service</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         ))}

@@ -90,7 +90,7 @@ export default function ContactView() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+    <div className="site-container mx-auto py-12 space-y-16">
       
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
@@ -173,7 +173,7 @@ export default function ContactView() {
         <div className="lg:col-span-7 space-y-8">
           
           {/* Inquiry Form */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+          <div className="card bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 space-y-6">
             <h2 className="font-display text-xl font-bold text-gray-900">
               Send Us a Quick Message
             </h2>
