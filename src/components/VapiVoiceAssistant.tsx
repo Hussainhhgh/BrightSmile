@@ -32,6 +32,7 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [messages, setMessages] = useState<TranscriptMessage[]>([]);
   const [showSettings, setShowSettings] = useState(false);
+  const [typedFallbackMessage, setTypedFallbackMessage] = useState('');
 
   // Load from environment variables or custom local storage fallbacks
   const [vapiPublicKey, setVapiPublicKey] = useState(() => {
@@ -202,6 +203,39 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
     setIsSpeaking(false);
   };
 
+  const handleTypedFallbackSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const text = typedFallbackMessage.trim();
+    if (!text) {
+      return;
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Math.random().toString(),
+        role: 'user',
+        text,
+        isFinal: true,
+        timestamp: new Date(),
+      },
+    ]);
+
+    const vapiSession = vapiRef.current;
+    if (vapiSession) {
+      try {
+        vapiSession.send?.(text);
+        vapiSession.sendMessage?.(text);
+        vapiSession.say?.(text);
+      } catch (err) {
+        console.warn('Typed fallback could not be forwarded to the live call.', err);
+      }
+    }
+
+    setTypedFallbackMessage('');
+  };
+
   const handleToggleCall = () => {
     if (isCallActive) {
       stopVoiceCall();
@@ -345,34 +379,62 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
                       </div>
                     ) : (
                       /* Live Transcripts Scroll Window */
-                      <div className="flex-1 flex flex-col space-y-3 pb-4">
-                        {messages.map((msg) => (
-                          <div
-                            key={msg.id}
-                            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                          >
+                      <div className="flex-1 flex flex-col pb-4 space-y-3">
+                        <div className="flex-1 flex flex-col space-y-3 overflow-y-auto pr-1">
+                          {messages.map((msg) => (
                             <div
-                              className={`max-w-[85%] p-3 rounded-2xl text-xs leading-relaxed shadow-sm ${
-                                msg.role === 'user'
-                                  ? 'bg-blue-600 text-white rounded-tr-none'
-                                  : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
-                              }`}
+                              key={msg.id}
+                              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                             >
-                              <span className="block text-[8px] opacity-70 mb-1 uppercase tracking-wider font-mono">
-                                {msg.role === 'user' ? 'You' : 'Olivia'}
-                              </span>
-                              <span>{msg.text}</span>
-                              {!msg.isFinal && (
-                                <span className="inline-flex gap-0.5 ml-1">
-                                  <span className="w-1 h-1 bg-current rounded-full animate-bounce delay-100" />
-                                  <span className="w-1 h-1 bg-current rounded-full animate-bounce delay-200" />
-                                  <span className="w-1 h-1 bg-current rounded-full animate-bounce delay-300" />
+                              <div
+                                className={`max-w-[85%] p-3 rounded-2xl text-xs leading-relaxed shadow-sm ${
+                                  msg.role === 'user'
+                                    ? 'bg-blue-600 text-white rounded-tr-none'
+                                    : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+                                }`}
+                              >
+                                <span className="block text-[8px] opacity-70 mb-1 uppercase tracking-wider font-mono">
+                                  {msg.role === 'user' ? 'You' : 'Olivia'}
                                 </span>
-                              )}
+                                <span>{msg.text}</span>
+                                {!msg.isFinal && (
+                                  <span className="inline-flex gap-0.5 ml-1">
+                                    <span className="w-1 h-1 bg-current rounded-full animate-bounce delay-100" />
+                                    <span className="w-1 h-1 bg-current rounded-full animate-bounce delay-200" />
+                                    <span className="w-1 h-1 bg-current rounded-full animate-bounce delay-300" />
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                        <div ref={messagesEndRef} />
+                          ))}
+                          <div ref={messagesEndRef} />
+                        </div>
+
+                        {isCallActive && (
+                          <form onSubmit={handleTypedFallbackSubmit} className="pt-2 border-t border-gray-100 space-y-2">
+                            <label className="block text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                              Type if Olivia cannot hear you
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={typedFallbackMessage}
+                                onChange={(e) => setTypedFallbackMessage(e.target.value)}
+                                placeholder="Type your appointment details or question"
+                                className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-800 outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                              <button
+                                type="submit"
+                                className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition cursor-pointer"
+                              >
+                                Send
+                              </button>
+                            </div>
+                            <p className="text-[10px] text-gray-400 leading-relaxed">
+                              This fallback stays available while the call is active so you can continue the booking even if the microphone is unclear.
+                            </p>
+                          </form>
+                        )}
                       </div>
                     )}
                   </div>
