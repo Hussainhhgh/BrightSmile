@@ -236,26 +236,31 @@ export default function ContactView() {
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1">Your Message *</label>
-                  <Select
-                    label="Subject of Message"
-                    value={formData.subject}
-                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  >
-                    <option value="General Inquiry">General Inquiry</option>
-                    <option value="Billing & Insurance">Billing & Insurance</option>
-                    <option value="Cosmetic Consultation">Cosmetic Consultation</option>
-                    <option value="Emergency Follow-up">Emergency Follow-up</option>
-                  </Select>
-                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-600 transition shadow-lg shadow-blue-100 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
-                >
                   <TextArea
-                    label="Your Message *"
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Describe your inquiry, symptoms, or requested dental procedures..."
                     rows={4}
                     required
                   />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-600 transition shadow-lg shadow-blue-100 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Send Message</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}
