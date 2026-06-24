@@ -104,10 +104,10 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
                 <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-3xl rotate-3 scale-102 shadow-xl opacity-20" />
                 
                 {/* Clinical Image Frame */}
-                <div className="relative bg-white p-3 rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+                <div className="relative p-3 rounded-3xl border border-gray-100 overflow-hidden card">
                   <img
                     src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800"
-                    alt="Hussain AI Modern Office"
+                    alt="BrightSmile Modern Office"
                     loading="lazy"
                     decoding="async"
                     fetchPriority="low"

@@ -33,20 +33,13 @@ export default function Navbar({ currentPage, onPageChange }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
-          <div 
-            onClick={() => handleNavClick('home')} 
-            className="flex items-center space-x-2 cursor-pointer group"
-          >
-            <div className="bg-gradient-to-tr from-blue-600 to-cyan-500 p-2 rounded-xl text-white shadow-md shadow-blue-200 group-hover:scale-105 transition-transform duration-200">
+          <div onClick={() => handleNavClick('home')} className="flex items-center space-x-3 cursor-pointer group">
+            <div className="p-2 rounded-xl text-white card group-hover:scale-105 transition-transform duration-200" style={{background: 'linear-gradient(90deg, rgb(var(--brand-600)), rgb(var(--brand-500)))'}}>
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <span className="font-display text-xl font-bold bg-gradient-to-r from-gray-900 to-blue-950 bg-clip-text text-transparent">
-                Hussain AI
-              </span>
-              <span className="block text-[10px] uppercase tracking-wider text-blue-600 font-semibold font-mono leading-none">
-                Platform
-              </span>
+              <span className="font-display text-lg font-bold text-gray-900">BrightSmile</span>
+              <span className="block text-[10px] uppercase tracking-wider text-blue-600 font-semibold font-mono leading-none">Dental Clinic</span>
             </div>
           </div>
 
@@ -71,13 +64,7 @@ export default function Navbar({ currentPage, onPageChange }: NavbarProps) {
                 </button>
               );
             })}
-            <Button
-              onClick={() => handleNavClick('book')}
-              aria-label="Book Appointment"
-              variant="primary"
-              size="md"
-              className={currentPage === 'book' ? 'shadow-cyan-100' : 'hover:shadow-xl'}
-            >
+            <Button onClick={() => handleNavClick('book')} aria-label="Book Appointment" variant="primary" size="md" className="shadow-lg">
               Book Appointment
             </Button>
           </div>

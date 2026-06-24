@@ -29,7 +29,7 @@ export default function Footer({ onPageChange }: FooterProps) {
               onClick={() => handleLinkClick('home')} 
               className="flex items-center space-x-2 cursor-pointer group"
             >
-              <div className="bg-gradient-to-tr from-blue-500 to-cyan-400 p-2 rounded-xl text-white shadow-md">
+              <div className="p-2 rounded-xl text-white" style={{background: 'linear-gradient(90deg, rgb(var(--brand-600)), rgb(var(--brand-500)))'}}>
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
@@ -142,7 +142,7 @@ export default function Footer({ onPageChange }: FooterProps) {
                 <span className="text-amber-400 font-semibold">Emergency Only</span>
               </li>
             </ul>
-            <div className="mt-4 p-2.5 rounded-lg bg-blue-950/40 border border-blue-900/30 text-xs text-blue-300 leading-relaxed">
+            <div className="mt-4 p-3 rounded-lg bg-blue-950/40 border border-blue-900/30 text-xs text-blue-300 leading-relaxed card">
               <span className="font-bold text-white block mb-0.5">💬 24/7 Voice Receptionist</span>
               Click the floating microphone at the bottom right to talk directly with our assistant!
             </div>
