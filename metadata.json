@@ -1,0 +1,6 @@
+{
+  "name": "BrightSmile Dental Clinic",
+  "description": "A modern, premium dental clinic website with online booking workflows, treatment portfolios, and an interactive AI voice receptionist powered by Vapi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
