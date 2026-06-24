@@ -71,6 +71,33 @@ Follow these simple steps to run the clinic locally:
    npm run build
    ```
 
+4. **Run Frontend + Server Together (recommended for development)**
+
+```bash
+npm install
+npm run dev:all
+```
+
+- The frontend runs on port `3000` and the server runs on port `3001`.
+- The server exposes `/api/book` (booking proxy) and `/api/health` and includes rate-limiting and request logging.
+
+Note: Ensure your `.env` contains `VITE_N8N_WEBHOOK_URL` or `NEXT_PUBLIC_N8N_WEBHOOK_URL` when you want the server to forward bookings to your n8n instance. Otherwise the server will simulate success responses for local testing.
+
+## Vapi Server-side Proxy (optional but recommended)
+
+To avoid shipping Vapi credentials to the browser, you can configure a server-side proxy that the client calls instead. Configure these environment variables in your `.env`:
+
+```
+VAPI_API_URL="https://api.vapi.example"
+VAPI_PUBLIC_KEY="<your-server-side-vapi-key>"
+```
+
+After setting them, the server exposes endpoints under `/api/vapi/*` which are forwarded to the configured `VAPI_API_URL` with the server-side `Authorization: Bearer <VAPI_PUBLIC_KEY>` header.
+
+Usage example (client): `fetch('/api/vapi/assistants/SESSION_START', { method: 'POST', body: JSON.stringify(...) })` — consult your Vapi provider docs for exact paths.
+
+This keeps your Vapi secret on the server and lets you add logging, rate-limiting and access controls centrally.
+
 ---
 
 ## 🧑‍⚕️ Clinical Code Quality

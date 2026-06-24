@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { Menu, X, Sparkles } from 'lucide-react';
+import Button from './ui/Button';
 
 interface NavbarProps {
   currentPage: string;
@@ -57,6 +58,8 @@ export default function Navbar({ currentPage, onPageChange }: NavbarProps) {
                 <button
                   key={item.value}
                   onClick={() => handleNavClick(item.value)}
+                  aria-current={isActive ? 'page' : undefined}
+                  aria-label={`Navigate to ${item.label}`}
                   className={`relative py-2 text-sm font-medium transition-colors duration-200 cursor-pointer ${
                     isActive ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
                   }`}
@@ -68,16 +71,15 @@ export default function Navbar({ currentPage, onPageChange }: NavbarProps) {
                 </button>
               );
             })}
-            <button
+            <Button
               onClick={() => handleNavClick('book')}
-              className={`px-5 py-2.5 rounded-xl font-medium text-sm text-white shadow-lg cursor-pointer transform hover:-translate-y-0.5 transition-all duration-200 ${
-                currentPage === 'book'
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 shadow-cyan-100'
-                  : 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-blue-100 hover:shadow-xl hover:shadow-blue-100'
-              }`}
+              aria-label="Book Appointment"
+              variant="primary"
+              size="md"
+              className={currentPage === 'book' ? 'shadow-cyan-100' : 'hover:shadow-xl'}
             >
               Book Appointment
-            </button>
+            </Button>
           </div>
 
           {/* Mobile menu button */}

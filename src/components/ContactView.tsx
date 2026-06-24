@@ -7,6 +7,9 @@ import React, { useState } from 'react';
 import { 
   Phone, Mail, MapPin, Clock, Send, CheckCircle, AlertCircle 
 } from 'lucide-react';
+import TextInput from './ui/TextInput';
+import Select from './ui/Select';
+import TextArea from './ui/TextArea';
 
 export default function ContactView() {
   const [formData, setFormData] = useState({
@@ -29,13 +32,31 @@ export default function ContactView() {
 
     setLoading(true);
     setError(null);
-
-    // Simulate sending email
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
-      setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
-    }, 1200);
+    // Send to server booking endpoint which will forward to configured webhook
+    fetch('/api/book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        callerName: formData.name,
+        callerEmail: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        source: 'contact_form'
+      })
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body?.error || 'Server failed to accept the request');
+        }
+        return res.json();
+      })
+      .then(() => {
+        setSubmitted(true);
+        setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
+      })
+      .catch((err) => setError(err?.message || 'Submission failed'))
+      .finally(() => setLoading(false));
   };
 
   const contactDetails = [
@@ -181,28 +202,22 @@ export default function ContactView() {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Your Full Name *</label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="e.g. Robert Hastings"
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Your Email Address *</label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="e.g. robert@example.com"
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
-                      required
-                    />
-                  </div>
+                  <TextInput
+                    label="Your Full Name *"
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="e.g. Robert Hastings"
+                    required
+                  />
+                  <TextInput
+                    label="Your Email Address *"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="e.g. robert@example.com"
+                    required
+                  />
                 </div>
 
                 <div>
@@ -221,32 +236,26 @@ export default function ContactView() {
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1">Your Message *</label>
-                  <textarea
+                  <Select
+                    label="Subject of Message"
+                    value={formData.subject}
+                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                  >
+                    <option value="General Inquiry">General Inquiry</option>
+                    <option value="Billing & Insurance">Billing & Insurance</option>
+                    <option value="Cosmetic Consultation">Cosmetic Consultation</option>
+                    <option value="Emergency Follow-up">Emergency Follow-up</option>
+                  </Select>
+                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-600 transition shadow-lg shadow-blue-100 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                >
+                  <TextArea
+                    label="Your Message *"
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Describe your inquiry, symptoms, or requested dental procedures..."
                     rows={4}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white resize-none"
                     required
                   />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-600 transition shadow-lg shadow-blue-100 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Sending inquiry...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" />
-                      <span>Send Message</span>
-                    </>
-                  )}
                 </button>
               </form>
             )}

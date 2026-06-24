@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { 
   Sparkles, Shield, Award, Clock, Heart, ArrowRight, Star, Plus, Minus, CheckCircle, ChevronRight 
 } from 'lucide-react';
+import Button from './ui/Button';
 import { SERVICES, DOCTORS, TESTIMONIALS, FAQS } from '../data';
 
 interface HomeViewProps {
@@ -70,19 +71,13 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
               
               {/* Dual Call-to-actions */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
-                <button
-                  onClick={() => onPageChange('book')}
-                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-medium shadow-lg shadow-blue-200 hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer flex justify-center items-center gap-2"
-                >
+                <Button onClick={() => onPageChange('book')} variant="primary" size="lg" className="flex items-center gap-2">
                   Book Appointment Now
                   <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => onPageChange('services')}
-                  className="px-8 py-4 rounded-xl bg-white border border-gray-200 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition cursor-pointer"
-                >
+                </Button>
+                <Button onClick={() => onPageChange('services')} variant="secondary" size="lg">
                   Explore Services
-                </button>
+                </Button>
               </div>
 
               {/* Badges/Social Proof */}
@@ -113,7 +108,10 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
                   <img
                     src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800"
                     alt="Hussain AI Modern Office"
-                    className="w-full h-[400px] object-cover rounded-2xl"
+                    loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
+                    className="w-full h-56 sm:h-72 md:h-[400px] object-cover rounded-2xl"
                   />
                   {/* Floating clinic stat bubble */}
                   <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-xl border border-gray-100 shadow-lg flex items-center gap-3">
@@ -242,10 +240,13 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
               key={doc.id}
               className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition duration-300"
             >
-              <div className="h-64 overflow-hidden relative">
+                <div className="h-56 sm:h-64 overflow-hidden relative">
                 <img
                   src={doc.image}
                   alt={doc.name}
+                  loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                 />
                 <div className="absolute top-4 left-4 bg-blue-600 text-white text-[10px] uppercase tracking-wider font-bold font-mono px-2.5 py-1 rounded-lg">
@@ -366,24 +367,27 @@ export default function HomeView({ onPageChange }: HomeViewProps) {
               Experience the future of dentistry today. Book an appointment online in under 60 seconds, or tap our voice receptionist in the bottom right corner of the screen for instant human-like speech support.
             </p>
             <div className="flex justify-center gap-4 pt-2">
-              <button
+              <Button
                 onClick={() => {
                   onPageChange('book');
                   window.scrollTo({ top: 0 });
                 }}
-                className="px-8 py-3.5 rounded-xl bg-white text-blue-600 font-bold text-sm shadow-md hover:bg-cyan-50 transition transform hover:-translate-y-0.5 cursor-pointer"
+                variant="secondary"
+                size="md"
               >
                 Book Online Now
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => {
                   onPageChange('contact');
                   window.scrollTo({ top: 0 });
                 }}
-                className="px-8 py-3.5 rounded-xl bg-transparent border border-white/40 text-white font-medium text-sm hover:bg-white/10 transition cursor-pointer"
+                variant="ghost"
+                size="md"
+                className="text-white border-white/40"
               >
                 Contact Clinic
-              </button>
+              </Button>
             </div>
           </div>
         </div>

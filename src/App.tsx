@@ -69,11 +69,14 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white text-gray-800 flex flex-col justify-between selection:bg-blue-100 selection:text-blue-800 font-sans">
       
+      {/* Skip link for accessibility */}
+      <a href="#main" className="sr-only focus:not-sr-only focus:block p-2 bg-white fixed top-4 left-4 z-50 rounded-md border border-gray-200">Skip to content</a>
+
       {/* Top Sticky Navigation */}
       <Navbar currentPage={currentPage} onPageChange={handlePageChange} />
 
       {/* Primary Page Content Wrapper */}
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         {renderActiveView()}
       </main>
 

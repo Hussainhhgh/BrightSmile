@@ -7,6 +7,9 @@ import React, { useState, useEffect } from 'react';
 import { 
   Calendar, Clock, Phone, Mail, User, BookOpen, CheckCircle, AlertTriangle, ArrowLeft, Printer, ShieldCheck 
 } from 'lucide-react';
+import TextInput from './ui/TextInput';
+import Select from './ui/Select';
+import TextArea from './ui/TextArea';
 import { SERVICES } from '../data';
 import { AppointmentFormData } from '../types';
 
@@ -33,30 +36,35 @@ export default function BookAppointmentView({
 
   const [formData, setFormData] = useState<AppointmentFormData>({
     fullName: '',
-    phone: '',
-    email: '',
-    date: '',
-    time: '',
-    serviceType: initialService,
-    notes: ''
-  });
+    try {
+      // Post to our server-side booking endpoint which will forward to the real webhook
+      const response = await fetch('/api/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          callerName: formData.fullName,
+          callerPhone: formData.phone,
+          callerEmail: formData.email,
+          requestedTime: payload.requestedTime,
+          action: payload.action,
+          reason: payload.reason,
+          eventId: payload.eventId,
+          source: 'booking_form'
+        })
+      });
 
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [bookingTicketId, setBookingTicketId] = useState('');
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body?.error || `Server returned ${response.status}`);
+      }
 
-  // Extract webhook URL from available configurations
-  const n8nWebhookUrl = (
-    (import.meta.env.VITE_N8N_WEBHOOK_URL as string) ||
-    (import.meta.env.NEXT_PUBLIC_N8N_WEBHOOK_URL as string) ||
-    ''
-  );
-
-  // Auto-generate a dummy ticket ID upon success
-  const generateTicketId = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let result = 'BS-';
+      setBookingTicketId(generateTicketId());
+      setSuccess(true);
+    } catch (err: any) {
+      console.error('Booking submission error:', err);
+      setError(
+        err?.message || 'We could not connect to our booking system. Please check your network or try again.'
+      );
     for (let i = 0; i < 6; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -490,16 +498,14 @@ export default function BookAppointmentView({
 
               {/* Full Name */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Full Patient Name *</label>
                 <div className="relative">
                   <User className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
+                  <TextInput
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleInputChange}
                     placeholder="e.g. Robert Hastings"
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
+                    className="pl-10"
                     required
                   />
                 </div>
@@ -509,12 +515,10 @@ export default function BookAppointmentView({
               {appointmentAction !== 'book' && (
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1">Booking Reference *</label>
-                  <input
-                    type="text"
+                  <TextInput
                     value={bookingReference}
                     onChange={(e) => setBookingReference(e.target.value)}
                     placeholder="e.g. BS-1A2B3C"
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
                     required
                   />
                 </div>
@@ -524,30 +528,29 @@ export default function BookAppointmentView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1">Phone Number *</label>
-                  <div className="relative">
+                    <div className="relative">
                     <Phone className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
-                    <input
-                      type="tel"
+                    <TextInput
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
                       placeholder="e.g. (415) 555-0198"
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
+                      className="pl-10"
                       required
                     />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1">Email Address *</label>
-                  <div className="relative">
+                    <div className="relative">
                     <Mail className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
-                    <input
+                    <TextInput
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="e.g. robert@example.com"
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
+                      className="pl-10"
                       required
                     />
                   </div>
@@ -557,18 +560,18 @@ export default function BookAppointmentView({
               {/* Service Type */}
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Requested Dental Procedure *</label>
-                <div className="relative">
+                  <div className="relative">
                   <BookOpen className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
-                  <select
+                  <Select
                     name="serviceType"
                     value={formData.serviceType}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white cursor-pointer"
+                    className="pl-10"
                   >
                     {SERVICES.map(s => (
                       <option key={s.id} value={s.title}>{s.title}</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               </div>
 
@@ -579,13 +582,12 @@ export default function BookAppointmentView({
                     <label className="block text-xs font-semibold text-gray-500 mb-1">
                       {appointmentAction === 'reschedule' ? 'New Appointment Date *' : 'Appointment Date *'}
                     </label>
-                    <input
+                    <TextInput
                       type="date"
                       name="date"
                       min={new Date().toISOString().split('T')[0]}
                       value={formData.date}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white"
                       required
                     />
                   </div>
@@ -593,18 +595,17 @@ export default function BookAppointmentView({
                     <label className="block text-xs font-semibold text-gray-500 mb-1">
                       {appointmentAction === 'reschedule' ? 'New Session Start Time *' : 'Session Start Time *'}
                     </label>
-                    <select
+                    <Select
                       name="time"
                       value={formData.time}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white cursor-pointer"
                       required
                     >
                       <option value="" disabled>Select a Time Slot</option>
                       {timeSlots.map(slot => (
                         <option key={slot} value={slot}>{slot} AM/PM</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                 </div>
               )}
@@ -620,7 +621,7 @@ export default function BookAppointmentView({
                 <label className="block text-xs font-semibold text-gray-500 mb-1">
                   {appointmentAction === 'cancel' ? 'Cancellation Notes' : 'Additional Treatment / Patient Notes'}
                 </label>
-                <textarea
+                <TextArea
                   name="notes"
                   value={formData.notes}
                   onChange={handleInputChange}
@@ -630,7 +631,6 @@ export default function BookAppointmentView({
                       : 'Specify any special dental history, allergies, or anxiety triggers...'
                   }
                   rows={3}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 bg-white resize-none"
                 />
               </div>
 

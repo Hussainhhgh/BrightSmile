@@ -34,11 +34,12 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
   const [showSettings, setShowSettings] = useState(false);
   const [typedFallbackMessage, setTypedFallbackMessage] = useState('');
 
-  // Load from environment variables or custom local storage fallbacks
+  // Load from environment variables or sessionStorage fallback (avoid persisting secrets to localStorage)
   const [vapiPublicKey, setVapiPublicKey] = useState(() => {
     return (
       (import.meta.env.VITE_VAPI_PUBLIC_KEY as string) ||
       (import.meta.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY as string) ||
+      sessionStorage.getItem('vapi_public_key') ||
       localStorage.getItem('vapi_public_key') ||
       ''
     );
@@ -48,10 +49,15 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
     return (
       (import.meta.env.VITE_VAPI_ASSISTANT_ID as string) ||
       (import.meta.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID as string) ||
+      sessionStorage.getItem('vapi_assistant_id') ||
       localStorage.getItem('vapi_assistant_id') ||
       ''
     );
   });
+
+  // Input fields are kept separate so we don't prefill secrets into the visible inputs
+  const [vapiPublicKeyInput, setVapiPublicKeyInput] = useState('');
+  const [vapiAssistantIdInput, setVapiAssistantIdInput] = useState('');
 
   const vapiRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -66,10 +72,25 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
 
   // Save settings when changed
   const handleSaveSettings = (key: string, assistantId: string) => {
-    setVapiPublicKey(key);
-    setVapiAssistantId(assistantId);
-    localStorage.setItem('vapi_public_key', key);
-    localStorage.setItem('vapi_assistant_id', assistantId);
+    // If inputs are empty, preserve existing (possibly env-derived) values
+    const finalKey = key && key.length > 0 ? key : vapiPublicKey;
+    const finalAssistantId = assistantId && assistantId.length > 0 ? assistantId : vapiAssistantId;
+
+    setVapiPublicKey(finalKey);
+    setVapiAssistantId(finalAssistantId);
+    // Persist to sessionStorage to reduce long-term exposure in shared machines
+    try {
+      sessionStorage.setItem('vapi_public_key', finalKey);
+      sessionStorage.setItem('vapi_assistant_id', finalAssistantId);
+      // Remove any previously-committed localStorage values to reduce exposure
+      localStorage.removeItem('vapi_public_key');
+      localStorage.removeItem('vapi_assistant_id');
+    } catch (err) {
+      // ignore storage failures
+    }
+    // clear input fields after save
+    setVapiPublicKeyInput('');
+    setVapiAssistantIdInput('');
     setShowSettings(false);
     // Force re-instantiation
     if (vapiRef.current) {
@@ -77,6 +98,14 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
       vapiRef.current = null;
     }
   };
+
+  // When showing settings, clear the visible inputs so secrets aren't prefilled
+  useEffect(() => {
+    if (showSettings) {
+      setVapiPublicKeyInput('');
+      setVapiAssistantIdInput('');
+    }
+  }, [showSettings]);
 
   // Scroll to bottom on new transcript message
   useEffect(() => {
@@ -298,33 +327,33 @@ export default function VapiVoiceAssistant({ openSignal, appointmentBrief }: Vap
                       Vapi Voice Assistant Keys
                     </h4>
                     <p className="text-xs text-gray-500 leading-relaxed">
-                      To test the live dental receptionist, configure your credentials below. These are stored securely in your browser cache.
+                      To test the live dental receptionist, configure your credentials below. These are stored only for this browser session and not persisted to localStorage.
                     </p>
                     <div className="space-y-3 text-xs">
                       <div>
                         <label className="block text-gray-600 font-medium mb-1">Vapi Public Key</label>
                         <input
                           type="password"
-                          value={vapiPublicKey}
-                          onChange={(e) => setVapiPublicKey(e.target.value)}
-                          placeholder="vapi-public-key-..."
+                          value={vapiPublicKeyInput}
+                          onChange={(e) => setVapiPublicKeyInput(e.target.value)}
+                          placeholder={vapiPublicKey ? 'Configured — hidden' : 'vapi-public-key-...'}
                           className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-800 bg-white"
                         />
                       </div>
                       <div>
                         <label className="block text-gray-600 font-medium mb-1">Assistant ID</label>
                         <input
-                          type="text"
-                          value={vapiAssistantId}
-                          onChange={(e) => setVapiAssistantId(e.target.value)}
-                          placeholder="e.g. 56a297fc-..."
+                          type="password"
+                          value={vapiAssistantIdInput}
+                          onChange={(e) => setVapiAssistantIdInput(e.target.value)}
+                          placeholder={vapiAssistantId ? 'Configured — hidden' : 'e.g. 56a297fc-...'}
                           className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-800 bg-white"
                         />
                       </div>
                     </div>
                     <div className="flex gap-2 pt-2">
                       <button
-                        onClick={() => handleSaveSettings(vapiPublicKey, vapiAssistantId)}
+                        onClick={() => handleSaveSettings(vapiPublicKeyInput, vapiAssistantIdInput)}
                         className="flex-1 py-2 bg-blue-600 text-white font-medium text-xs rounded-lg hover:bg-blue-700 transition cursor-pointer flex justify-center items-center gap-1.5"
                       >
                         <Check className="w-3.5 h-3.5" /> Save Keys

@@ -1,1 +1,64 @@
 @import "tailwindcss";
+
+:root{
+	--bg: 255,255,255;
+	--muted: 100,116,139;
+	--text-primary: 17,24,39;
+	--bg: 255,255,255;
+	--card-bg: 250,252,255;
+	--brand-400: 96,165,250;
+	--brand-500: 37,99,235;
+	--brand-600: 14,165,233;
+	--accent-500: 14,165,233;
+	--radius-lg: 1rem;
+	--shadow-1: 0 6px 20px rgba(2,6,23,0.06);
+	--shadow-2: 0 10px 30px rgba(2,6,23,0.08);
+}
+
+html,body,#root{height:100%;}
+
+/* Base typography and utility classes */
+body{
+	font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+	color: rgb(var(--text-primary));
+	background-color: rgb(var(--bg));
+	-webkit-font-smoothing:antialiased;
+	-moz-osx-font-smoothing:grayscale;
+}
+
+.font-display{font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce){
+	*{animation-duration:0.001ms!important;transition-duration:0.001ms!important;scroll-behavior:auto!important}
+}
+
+/* Accessible focus outlines */
+:focus{outline: none}
+:focus-visible{outline:3px solid rgba(var(--brand-500),0.12);outline-offset:3px;border-radius:8px}
+
+/* Design tokens helpers for components */
+.card{
+	background-color: rgb(var(--card-bg));
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-1);
+}
+
+/* Button styles using tokens, used alongside tailwind classes */
+.btn-primary{
+	background: linear-gradient(90deg, rgb(var(--brand-600)) 0%, rgb(var(--brand-500)) 100%);
+	color: white;
+	box-shadow: var(--shadow-2);
+}
+.btn-primary:hover{ transform: translateY(-1px); }
+.btn-primary:active{ transform: translateY(0); opacity:0.95 }
+
+.btn-secondary{
+	background: transparent;
+	color: rgb(var(--text-primary));
+	border: 1px solid rgba(15,23,42,0.06);
+}
+.btn-ghost{ background: transparent; color: rgb(var(--text-primary)); }
+
+/* Input focus using brand token */
+.input-focus:focus-visible{ box-shadow: 0 0 0 4px rgba(var(--brand-500),0.06); border-radius:0.5rem }
